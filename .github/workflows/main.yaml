@@ -42,8 +42,8 @@ jobs:
           brew install ninja
           brew install libssh2 cmake golang protobuf
           ninja --version
-          cmake --version
           python -m pip install --user absl-py
+          cmake --version
           python -m pip install --uesr protobuf
           
       - name: Configure
