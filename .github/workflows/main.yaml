@@ -41,9 +41,16 @@ jobs:
           echo github.event.action: ${{ github.event.action }}
           echo github.event_name: ${{ github.event_name }}
 
+      
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: ${{ github.workspace }}/vcpkg
+          key: ${{ hashFiles('external/x64-windows-static_response_file.txt) }}
+
 
       - name: Install dependencies on windows
-        if: startsWith(matrix.config.os, 'windows')
+        if: startsWith(matrix.config.os, 'windows') && steps.cach.outputs.cache-hit != 'true'
         run: |
           choco install ninja 
           ninja --version
