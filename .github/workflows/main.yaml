@@ -44,11 +44,10 @@ jobs:
       - name: Install dependencies on windows
         if: startsWith(matrix.config.os, 'windows')
         run: |
-          choco install ninja cmake
+          choco install ninja 
           ninja --version
-          cmake --version
-          ${{ github.workspace }}\bootstrap-vcpkg.bat -disableMetrics
-          ${{ github.workspace }}\vcpkg install @external\x64-windows-static_response_file.txt
+          ${{ github.workspace }}\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+          ${{ github.workspace }}\vcpkg\vcpkg install @external\x64-windows-static_response_file.txt
         # cmd "${{ matrix.config.environment_script }}"
 
           
