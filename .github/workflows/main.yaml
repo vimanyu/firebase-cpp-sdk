@@ -46,16 +46,14 @@ jobs:
         id: cache_vcpkg
         with:
           path: ${{ github.workspace }}/vcpkg
-          key: test2-vcpkg-${{ hashFiles('external/x64-windows-static_response_file.txt') }}
+          key:  vcpkg-${{ hashFiles('external/vcpkg_x64-windows-static_response_file.txt') }}
 
 
       - name: Install dependencies on windows
         if: startsWith(matrix.config.os, 'windows') && steps.cache_vcpkg.outputs.cache-hit != 'true'
         run: |
-          ${{ github.workspace }}\vcpkg\bootstrap-vcpkg.bat -disableMetrics
-          ${{ github.workspace }}\vcpkg\vcpkg install zlib openssl protobuf abseil upb c-ares --triplet x64-windows-static
-          ls vcpkg/installed/x64-windows-static
-          #${{ github.workspace }}\vcpkg\vcpkg install @external\x64-windows-static_response_file.txt
+          ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
+          ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_x64-windows-static_response_file.txt
           # cmd "${{ matrix.config.environment_script }}"
 
       - name: Setup python and install dependencies
