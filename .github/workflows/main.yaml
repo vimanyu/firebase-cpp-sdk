@@ -58,6 +58,17 @@ jobs:
           #${{ github.workspace }}\vcpkg\vcpkg install @external\x64-windows-static_response_file.txt
           # cmd "${{ matrix.config.environment_script }}"
 
+      - name: Setup python and install dependencies
+        uses: actions/setup-python@v2
+        with:
+          python-version: 2.7
+          architecture: x64
+      - run: |
+          python -m pip install --upgrade pip
+          pip install absl-py
+          pip install protobuf
+
+
       - name: Alter the path to avoid using rtool's tar before cache posting
         if: contains(runner.os, 'windows')
         run: echo "::add-path::C:/Program Files/Git/usr/bin"
