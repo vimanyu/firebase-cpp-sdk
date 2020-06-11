@@ -12,7 +12,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
+    runs-on: ${{ matrix.config.os }} # будет запускаться по очереди на всех типах машин
     strategy:
       fail-fast: false
       matrix:
@@ -43,14 +43,14 @@ jobs:
 
       
       - uses: actions/cache@v2
-        id: cache_vcpkg
+        id: cache
         with:
           path: ${{ github.workspace }}/vcpkg
-          key: test-${{ hashFiles('external/x64-windows-static_response_file.txt') }}
+          key: ${{ hashFiles('external/x64-windows-static_response_file.txt') }}
 
 
       - name: Install dependencies on windows
-        if: startsWith(matrix.config.os, 'windows') && steps.cache_vcpkg.outputs.cache-hit != 'true'
+        if: startsWith(matrix.config.os, 'windows') && steps.cache.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}\vcpkg\bootstrap-vcpkg.bat -disableMetrics
           ${{ github.workspace }}\vcpkg\vcpkg install @external\x64-windows-static_response_file.txt
@@ -66,7 +66,28 @@ jobs:
           python -m pip install --upgrade pip
           pip install absl-py
           pip install protobuf
-
+          
       - name: Alter the path to avoid using rtool's tar before cache posting
-        run: echo "::add-path::C:\Program Files\Git\usr\bin\"
         if: contains(runner.os, 'windows')
+        run: echo "::add-path::C:/Program Files/Git/usr/bin"
+
+      - name: Configure
+        shell: bash
+        run: |
+          mkdir build
+          cmake \
+            -S . \
+            -B build \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+            -G "${{ matrix.config.generators }}" \
+            -DCMAKE_TOOLCHAIN_FILE="vcpkg/scripts/buildsystems/vcpkg.cmake" \
+            -DVCPKG_TARGET_TRIPLET=x64-windows-static
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --config ${{ matrix.config.build_type }} -j 8
+
+      - name: Install Strip
+        shell: bash
+        run: cmake --install . --strip
+
