@@ -104,3 +104,4 @@ jobs:
         shell: bash
         run: |
           find build -name "*.lib"
+          find build -name "*.a"
