@@ -1,16 +1,12 @@
-name: CMake Build Matrix
+name: Desktop Builds
 
-# Controls when the action will run. Triggers the workflow on push
 on: 
   push:
     branches:
       - gha-build
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     name: ${{ matrix.config.name }}
     runs-on: ${{ matrix.config.os }}
     strategy:
@@ -18,7 +14,7 @@ jobs:
       matrix:
         config: 
         - {
-            name: "Windows x64 VS2019 Release Python 2.7",
+            name: "Windows x64 Release VS2019 Python 2.7",
             os: windows-latest,
             artifact: "windows_msvc_x64_python2.7z",
             build_type: "Release",
@@ -30,7 +26,7 @@ jobs:
             triplet: "x64-windows-static"
           }
         - {
-            name: "Windows x64 VS2019 Release Python 3.6",
+            name: "Windows x64 Release VS2019 Python 3.6",
             os: windows-latest,
             artifact: "windows_msvc_x64_python3.7z",
             build_type: "Release",
@@ -42,7 +38,7 @@ jobs:
             triplet: "x64-windows-static"
           }
         - {
-            name: "Windows x86 VS2019 Release Python 2.7",
+            name: "Windows x86 Release VS2019 Python 2.7",
             os: windows-latest,
             artifact: "windows_msvc_x86_python2.7z",
             build_type: "Release",
@@ -54,7 +50,7 @@ jobs:
             triplet: "x86-windows-static"
           }
         - {
-            name: "Windows x86 VS2019 Release Python 3.6",
+            name: "Windows x86 Release VS2019 Python 3.6",
             os: windows-latest,
             artifact: "windows_msvc_x86_python3.7z",
             build_type: "Release",
@@ -115,7 +111,7 @@ jobs:
             triplet: "x86-windows-static"
           }
         - {
-            name: "Ubuntu x64 g++ Release Python 2.7",
+            name: "Ubuntu x64 Release g++ Python 2.7",
             os: ubuntu-latest,
             artifact: "ubuntu_gcc_x64_python2.7z",
             build_type: "Release",
@@ -125,9 +121,52 @@ jobs:
             architecture: "x64",
             triplet: "x64-linux"
           }
+        - {
+            name: "Ubuntu x64 Release g++ Python 3.6",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python3.7z",
+            build_type: "Release",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
+        - {
+            name: "Ubuntu x64 Debug g++ Python 2.7",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python2.7z",
+            build_type: "Debug",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
+        - {
+            name: "Ubuntu x64 Debug g++ Python 3.6",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python3.7z",
+            build_type: "Debug",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
+        - {
+            name: "macOS x64 Relase clang Python 2.7",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python2.7z",
+            build_type: "Release",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -147,7 +186,7 @@ jobs:
           # cmd "${{ matrix.config.environment_script }}"
 
       - name: Install vcpkg packages (linux)
-        if: startsWith(matrix.config.os, 'ubuntu') && steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: !startsWith(matrix.config.os, 'windows') && steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh -disableMetrics
           ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.config.triplet }}_response_file.txt
@@ -189,5 +228,6 @@ jobs:
         run: |
           find build -name "*.lib"
           find build -name "*.dll"
+          find build -name "*.dylib"
           find build -name "*.a"
           find build -name "*.so"
