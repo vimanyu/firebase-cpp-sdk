@@ -12,23 +12,109 @@ jobs:
   build:
     # The type of runner that the job will run on
     name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }} # будет запускаться по очереди на всех типах машин
+    runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
         config: 
         - {
-            name: "Windows Latest MSVC",
+            name: "Windows x64 VS2019 Release Python 2.7",
             os: windows-latest,
-            artifact: "windows_msvc.7z",
+            artifact: "windows_msvc_x64_python2.7z",
             build_type: "Release",
-            cc: "cl",
-            cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
             archiver: "7z a",
             generators: "Visual Studio 16 2019",
-            python_version: 2.7
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-windows-static"
           }
+        - {
+            name: "Windows x64 VS2019 Release Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x64_python3.7z",
+            build_type: "Release",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-windows-static"
+          }
+        - {
+            name: "Windows x86 VS2019 Release Python 2.7",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python2.7z",
+            build_type: "Release",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 2.7,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+        - {
+            name: "Windows x86 VS2019 Release Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python3.7z",
+            build_type: "Release",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+
+        - {
+            name: "Windows x64 VS2019 Debug Python 2.7",
+            os: windows-latest,
+            artifact: "windows_msvc_x64_python2.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-windows-static"
+          }
+        - {
+            name: "Windows x64 VS2019 Debug Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x64_python3.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-windows-static"
+          }
+        - {
+            name: "Windows x86 VS2019 Debug Python 2.7",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python2.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 2.7,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+        - {
+            name: "Windows x86 VS2019 Debug Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python3.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -45,36 +131,38 @@ jobs:
       
       - name: Cache vcpkg packages
         uses: actions/cache@v2
-        id: cache_vcpkg
+        id: cache-vcpkg
         with:
           path: vcpkg
-          key:  dev-${{ matrix.config.os }}-vcpkg-${{ hashFiles('external/vcpkg_x64-windows-static_response_file.txt') }}
+          # Example key: windows-latest_vcpkg_`hash(external/vcpkg_x64-windows-static_response_file.txt)`
+          key:  dev_${{ matrix.config.os }}_vcpkg_${{ hashFiles('external/vcpkg_${{ matrix.config.triplet }}_response_file.txt') }}
 
       - name: Install vcpkg packages
-        if: startsWith(matrix.config.os, 'windows') && steps.cache_vcpkg.outputs.cache-hit != 'true'
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
-          ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_x64-windows-static_response_file.txt
+          ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.config.triplet }}_response_file.txt
           # cmd "${{ matrix.config.environment_script }}"
 
       - name: Get pip cache dir
-        id: pip-cache
+        id: get-pip-cache-dir
         run: |
           echo "::set-output name=dir::$(pip cache dir)"
 
-      - name: pip cache
-        id: cache_pip
+      - name: Cache pip packages 
+        id: cache-pip
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ matrix.config.os }}-pip-2.7-x64-${{ hashFiles('external/pip_requirements.txt') }}
+          # Example key: windows-latest_pip_2.7_x64_`hash(external/pip_requirements.txt)`
+          key: ${{ matrix.config.os }}_pip_${{ matrix.config.python_version }}_${{ matrix.config.architecture }}_${{ hashFiles('external/pip_requirements.txt') }}
 
       - name: Setup python and install pip packages
-        if: steps.cache_pip.outputs.cache-hit != 'true'
+        if: steps.cache-pip.outputs.cache-hit != 'true'
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.config.python_version }}
-          architecture: x64
+          architecture: ${{ matrix.config.architecture }}
       - run: |
           python -m pip install --upgrade pip
           pip install -r external/pip_requirements.txt
@@ -93,8 +181,9 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
             -G "${{ matrix.config.generators }}" \
             -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DVCPKG_TARGET_TRIPLET=x64-windows-static \
-            -DFIREBASE_INCLUDE_FIRESTORE=OFF
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
+            -DFIREBASE_INCLUDE_FIRESTORE=OFF \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
 
       - name: Build
         shell: bash
