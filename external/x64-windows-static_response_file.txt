@@ -1,4 +1,0 @@
-grpc
-libssh2
---triplet
-x64-windows-static
