@@ -43,18 +43,12 @@ jobs:
           echo github.event_name: ${{ github.event_name }}
 
       
-      - uses: actions/cache@v2
+      - name: Cache vcpkg packages
+        uses: actions/cache@v2
         id: cache_vcpkg
         with:
           path: ${{ github.workspace }}/vcpkg
           key:  ${{ matrix.config.os }}-vcpkg-${{ hashFiles('external/vcpkg_x64-windows-static_response_file.txt') }}
-
-      - uses: actions/cache@v2
-        id: cache_pip
-        if: startsWith( ${{ matrix.config.os }}, 'windows')
-        with:
-          path: ~\AppData\Local\pip\Cache
-          key: ${{ matrix.config.os }}-pip-x64-${{ hashFiles('external/pip_requirements.txt') }}
 
       - name: Install vcpkg packages
         if: startsWith(matrix.config.os, 'windows') && steps.cache_vcpkg.outputs.cache-hit != 'true'
@@ -62,6 +56,18 @@ jobs:
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
           ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_x64-windows-static_response_file.txt
           # cmd "${{ matrix.config.environment_script }}"
+
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          echo "::set-output name=dir::$(pip cache dir)"
+
+      - name: pip cache
+        id: cache_pip
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ matrix.config.os }}-pip-2.7-x64-${{ hashFiles('external/pip_requirements.txt') }}
 
       - name: Setup python and install pip packages
         if: steps.cache_pip.outputs.cache-hit != 'true'
