@@ -155,13 +155,46 @@ jobs:
             triplet: "x64-linux"
           }
         - {
-            name: "macOS x64 Relase clang Python 2.7",
+            name: "macOS x64 Release clang Python 2.7",
             os: macos-latest,
             artifact: "macos_clang_x64_python2.7z",
             build_type: "Release",
             archiver: "7za a",
             generators: "Unix Makefiles",
             python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
+        - {
+            name: "macOS x64 Release clang Python 3.6",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python3.7z",
+            build_type: "Release",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
+        - {
+            name: "macOS x64 Debug clang Python 2.7",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python2.7z",
+            build_type: "Debug",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
+        - {
+            name: "macOS x64 Debug clang Python 3.6",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python3.7z",
+            build_type: "Debug",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
             architecture: "x64",
             triplet: "x64-osx"
           }
@@ -185,7 +218,7 @@ jobs:
           ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.config.triplet }}_response_file.txt
           # cmd "${{ matrix.config.environment_script }}"
 
-      - name: Install vcpkg packages (linux)
+      - name: Install vcpkg packages (not windows)
         if: startsWith(matrix.config.os, 'windows')!= 'true' && steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh -disableMetrics
