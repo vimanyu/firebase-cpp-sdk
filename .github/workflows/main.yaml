@@ -43,14 +43,14 @@ jobs:
 
       
       - uses: actions/cache@v2
-        id: cache
+        id: cache_vcpkg
         with:
           path: ${{ github.workspace }}/vcpkg
-          key: test3-${{ hashFiles('external/x64-windows-static_response_file.txt') }}
+          key: test2-vcpkg-${{ hashFiles('external/x64-windows-static_response_file.txt') }}
 
 
       - name: Install dependencies on windows
-        if: startsWith(matrix.config.os, 'windows') && steps.cache.outputs.cache-hit != 'true'
+        if: startsWith(matrix.config.os, 'windows') && steps.cache_vcpkg.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}\vcpkg\bootstrap-vcpkg.bat -disableMetrics
           ${{ github.workspace }}\vcpkg\vcpkg install zlib openssl protobuf abseil upb c-ares --triplet x64-windows-static
@@ -90,7 +90,7 @@ jobs:
         shell: bash
         run: cmake --build build --config ${{ matrix.config.build_type }} -j 8
 
-      - name: Install Strip
+      - name: Print built libraries
         shell: bash
-        run: cmake --install . --strip
-
+        run: |
+          find build -name "*.lib"
