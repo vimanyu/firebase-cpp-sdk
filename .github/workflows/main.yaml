@@ -53,7 +53,7 @@ jobs:
         if: startsWith(matrix.config.os, 'windows') && steps.cache.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}\vcpkg\bootstrap-vcpkg.bat -disableMetrics
-          ${{ github.workspace }}\vcpkg\vcpkg install zlib openssl protobuf abseil ubpb c-ares --triplet x64-windows-static
+          ${{ github.workspace }}\vcpkg\vcpkg install zlib openssl protobuf abseil upb c-ares --triplet x64-windows-static
           ls vcpkg/installed/x64-windows-static
           #${{ github.workspace }}\vcpkg\vcpkg install @external\x64-windows-static_response_file.txt
           # cmd "${{ matrix.config.environment_script }}"
