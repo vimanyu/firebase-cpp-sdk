@@ -114,7 +114,17 @@ jobs:
             architecture: "x86",
             triplet: "x86-windows-static"
           }
-
+        - {
+            name: "Ubuntu x64 g++ Release Python 2.7",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python2.7z",
+            build_type: "Release",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -193,4 +203,6 @@ jobs:
         shell: bash
         run: |
           find build -name "*.lib"
+          find build -name "*.dll"
           find build -name "*.a"
+          find build -name "*.so"
