@@ -140,14 +140,14 @@ jobs:
 
       
       - name: Install vcpkg packages (windows)
-        if: contains( ${{ matrix.config.os }}, 'windows') && steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: startsWith(matrix.config.os, 'windows') && steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
           ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.config.triplet }}_response_file.txt
           # cmd "${{ matrix.config.environment_script }}"
 
       - name: Install vcpkg packages (linux)
-        if: contains( ${{ matrix.config.os }}, 'ubuntu') && steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: startsWith(matrix.config.os, 'ubuntu') && steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh -disableMetrics
           ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.config.triplet }}_response_file.txt
