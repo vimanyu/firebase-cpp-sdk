@@ -47,28 +47,28 @@ jobs:
         id: cache_vcpkg
         with:
           path: ${{ github.workspace }}/vcpkg
-          key:  ${{ runner.os }}-vcpkg-${{ hashFiles('external/vcpkg_x64-windows-static_response_file.txt') }}
+          key:  ${{ matrix.config.os }}-vcpkg-${{ hashFiles('external/vcpkg_x64-windows-static_response_file.txt') }}
 
       - uses: actions/cache@v2
-        id: ${{ runner.os }}-cache_pip
-        if: startsWith(runner.os, 'Linux')
+        id: ${{ matrix.config.os }}-cache_pip
+        if: startsWith(matrix.config.os, 'Linux')
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-x64-${{ hashFiles('external/pip_requirements.txt') }}
+          key: ${{ matrix.config.os }}-pip-x64-${{ hashFiles('external/pip_requirements.txt') }}
 
       - uses: actions/cache@v2
-        id: ${{ runner.os }}-cache_pip
-        if: startsWith(runner.os, 'macOS')
+        id: ${{ matrix.config.os }}-cache_pip
+        if: startsWith(matrix.config.os, 'macOS')
         with:
           path: ~/Library/Caches/pip
-          key: ${{ runner.os }}-pip-x64-${{ hashFiles('external/pip_requirements.txt') }}
+          key: ${{ matrix.config.os }}-pip-x64-${{ hashFiles('external/pip_requirements.txt') }}
 
       - uses: actions/cache@v2
-        id: ${{ runner.os }}-cache_pip
-        if: startsWith(runner.os, 'Windows')
+        id: ${{ matrix.config.os }}-cache_pip
+        if: startsWith(matrix.config.os, 'windows')
         with:
           path: ~\AppData\Local\pip\Cache
-          key: ${{ runner.os }}-pip-x64-${{ hashFiles('external/pip_requirements.txt') }}
+          key: ${{ matrix.config.os }}-pip-x64-${{ hashFiles('external/pip_requirements.txt') }}
 
       - name: Install vcpkg packages
         if: startsWith(matrix.config.os, 'windows') && steps.cache_vcpkg.outputs.cache-hit != 'true'
@@ -78,7 +78,7 @@ jobs:
           # cmd "${{ matrix.config.environment_script }}"
 
       - name: Setup python and install pip packages
-        if: steps.${{ runner.os }}-cache_pip.outputs.cache-hit != 'true'
+        if: steps.${{ matrix.config.os }}-cache_pip.outputs.cache-hit != 'true'
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.config.python_version }}
@@ -88,7 +88,7 @@ jobs:
           pip install -r external/pip_requirements.txt
 
       - name: Alter the path to avoid using rtool's tar before cache posting
-        if: contains(runner.os, 'windows')
+        if: contains(matrix.config.os, 'windows')
         run: echo "::add-path::C:/Program Files/Git/usr/bin"
 
       - name: Configure
