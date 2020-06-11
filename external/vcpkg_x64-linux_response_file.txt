@@ -1,0 +1,8 @@
+zlib
+openssl
+protobuf
+abseil
+upb
+c-ares
+--triplet
+x64-linux
