@@ -75,6 +75,9 @@ project (firebase NONE)
 enable_language(C)
 enable_language(CXX)
 
+message(STATUS "CMAKE TOOLCHAIN: ${CMAKE_TOOLCHAIN_FILE}")
+find_package(zlib REQUIRED)
+
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
 include(external_rules)
 include(cpp_pack)
