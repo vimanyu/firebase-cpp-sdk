@@ -3,7 +3,7 @@ name: Windows Builds
 on: 
   push:
     branches:
-      - gha-windows
+      - feature/gha-windows
 
 jobs:
   build:
