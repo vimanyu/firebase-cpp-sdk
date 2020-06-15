@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.arch }}-${{ matrix.python_version }}-${{ matrix.generator }}
+    name: ${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.architecture }}-${{ matrix.python_version }}-${{ matrix.generator }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
