@@ -1,0 +1,80 @@
+name: Windows Builds
+
+on: 
+  push:
+    branches:
+      - gha-windows
+
+jobs:
+  build:
+    name: ${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.arch }}-${{ matrix.python_version }}-${{ matrix.generator }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
+        build_type: ["Release"]
+        architecture: ["x64"]
+        python_version: [3.6]
+        generator: ["Visual Studio 2019"]
+        include:
+        - os: windows-latest
+          architecture: "x86"
+          vcpkg_triplet: "x86-windows-static"
+          msbuild_platform: "Win32"
+        - os: windows-latest
+          architecture: "x64"
+          vcpkg_triplet: "x64-windows-static"
+          msbuild_platform: "x64"
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install Ninja
+        if: startsWith(matrix.generator, 'Ninja')
+        run: |
+          choco install ninja
+
+      - name: Install vcpkg packages (windows)
+        if: startsWith(matrix.os, 'windows')
+        run: |
+          ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
+          ${{ github.workspace }}/vcpkg/vcpkg install openssl protobuf --triplet ${{ matrix.vcpkg_triplet }}
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python_version }}
+          architecture: ${{ matrix.architecture }}
+
+      - name: Install pip packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r external/pip_requirements.txt
+
+      - name: Configure (windows-x64)
+        shell: bash
+        run: |
+          mkdir build
+          cmake \
+            -S . \
+            -B build \
+            -G "${{ matrix.generator }}" \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }}
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --config ${{ matrix.config.build_type }} -j 8
+
+      - name: Print built libraries
+        shell: bash
+        run: |
+          find build -name "*.lib"
+          find build -name "*.dll"
+          find build -name "*.dylib"
+          find build -name "*.a"
+          find build -name "*.so"
