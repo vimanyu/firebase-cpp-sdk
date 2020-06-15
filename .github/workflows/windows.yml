@@ -12,11 +12,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
-        build_type: ["Release"]
-        architecture: ["x64"]
-        python_version: [3.6]
-        generator: ["Visual Studio 2019"]
+        os: [windows-latest,]
+        build_type: ["Release",]
+        architecture: ["x64",]
+        python_version: [3.6,]
+        generator: ["Visual Studio 2019",]
         include:
         - os: windows-latest
           architecture: "x86"
