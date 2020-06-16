@@ -1,70 +1,255 @@
-name: Windows Builds
+name: Desktop Builds
 
 on: 
   push:
     branches:
-      - feature/gha-windows
+      - gha-build
 
 jobs:
   build:
-    name: ${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.architecture }}-${{ matrix.python_version }}-${{ matrix.generator }}
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest,]
-        build_type: ["Release",]
-        architecture: ["x64",]
-        python_version: [2.7,]
-        generator: ["Visual Studio 16 2019",]
-        include:
-        - os: windows-latest
-          architecture: "x64"
-          vcpkg_triplet: "x64-windows-static"
-          msbuild_platform: "x64"
+        config: 
+        - {
+            name: "Windows x64 Release VS2019 Python 2.7",
+            os: windows-latest,
+            artifact: "windows_msvc_x64_python2.7z",
+            build_type: "Release",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-windows-static"
+          }
+        - {
+            name: "Windows x64 Release VS2019 Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x64_python3.7z",
+            build_type: "Release",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-windows-static"
+          }
+        - {
+            name: "Windows x86 Release VS2019 Python 2.7",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python2.7z",
+            build_type: "Release",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 2.7,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+        - {
+            name: "Windows x86 Release VS2019 Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python3.7z",
+            build_type: "Release",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+
+        - {
+            name: "Windows x64 VS2019 Debug Python 2.7",
+            os: windows-latest,
+            artifact: "windows_msvc_x64_python2.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-windows-static"
+          }
+        - {
+            name: "Windows x64 VS2019 Debug Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x64_python3.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-windows-static"
+          }
+        - {
+            name: "Windows x86 VS2019 Debug Python 2.7",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python2.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 2.7,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+        - {
+            name: "Windows x86 VS2019 Debug Python 3.6",
+            os: windows-latest,
+            artifact: "windows_msvc_x86_python3.7z",
+            build_type: "Debug",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            archiver: "7z a",
+            generators: "Visual Studio 16 2019",
+            python_version: 3.6,
+            architecture: "x86",
+            triplet: "x86-windows-static"
+          }
+        - {
+            name: "Ubuntu x64 Release g++ Python 2.7",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python2.7z",
+            build_type: "Release",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
+        - {
+            name: "Ubuntu x64 Release g++ Python 3.6",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python3.7z",
+            build_type: "Release",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
+        - {
+            name: "Ubuntu x64 Debug g++ Python 2.7",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python2.7z",
+            build_type: "Debug",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
+        - {
+            name: "Ubuntu x64 Debug g++ Python 3.6",
+            os: ubuntu-latest,
+            artifact: "ubuntu_gcc_x64_python3.7z",
+            build_type: "Debug",
+            archiver: "7z a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-linux"
+          }
+        - {
+            name: "macOS x64 Release clang Python 2.7",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python2.7z",
+            build_type: "Release",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
+        - {
+            name: "macOS x64 Release clang Python 3.6",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python3.7z",
+            build_type: "Release",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
+        - {
+            name: "macOS x64 Debug clang Python 2.7",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python2.7z",
+            build_type: "Debug",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 2.7,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
+        - {
+            name: "macOS x64 Debug clang Python 3.6",
+            os: macos-latest,
+            artifact: "macos_clang_x64_python3.7z",
+            build_type: "Debug",
+            archiver: "7za a",
+            generators: "Unix Makefiles",
+            python_version: 3.6,
+            architecture: "x64",
+            triplet: "x64-osx"
+          }
 
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
 
-      - name: Install Ninja
-        if: startsWith(matrix.generator, 'Ninja')
+      - name: Print env
         run: |
-          choco install ninja
-
+          echo github.event.action: ${{ github.event.action }}
+          echo github.event_name: ${{ github.event_name }}
+      
       - name: Install vcpkg packages (windows)
-        if: startsWith(matrix.os, 'windows')
+        if: startsWith(matrix.config.os, 'windows') && steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
-          ${{ github.workspace }}/vcpkg/vcpkg install openssl protobuf zlib abseil --triplet ${{ matrix.vcpkg_triplet }}
-
-      - name: Setup python
+          ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.config.triplet }}_response_file.txt
+          # cmd "${{ matrix.config.environment_script }}"
+      - name: Install vcpkg packages (not windows)
+        if: startsWith(matrix.config.os, 'windows')!= 'true' && steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: |
+          ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh -disableMetrics
+          ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.config.triplet }}_response_file.txt
+      - name: Setup python and install pip packages
+        if: steps.cache-pip.outputs.cache-hit != 'true'
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python_version }}
-          architecture: ${{ matrix.architecture }}
+          python-version: ${{ matrix.config.python_version }}
+          architecture: ${{ matrix.config.architecture }}
 
-      - name: Install pip packages
-        run: |
+      - run: |
           python -m pip install --upgrade pip
-          pip install absl-py protobuf
+          pip install -r external/pip_requirements.txt
+      - name: Alter the path to avoid using rtool's tar before cache posting
+        if: contains( ${{ matrix.config.os }}, 'windows')
+        run: echo "::add-path::C:/Program Files/Git/usr/bin"
 
-      - name: Configure (windows-x64)
+      - name: Configure
         shell: bash
         run: |
           mkdir build
           cmake \
             -S . \
             -B build \
-            -G "${{ matrix.generator }}" \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }} \
+            -G "${{ matrix.config.generators }}" \
             -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
-
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.config.triplet }} \
+            -DFIREBASE_INCLUDE_FIRESTORE=OFF \
+            -DCMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
       - name: Build
         shell: bash
-        run: cmake --build build --target firebase_app firebase_remote_config --config ${{ matrix.build_type }} -j 8
+        run: cmake --build build --config ${{ matrix.config.build_type }} -j 8
 
       - name: Print built libraries
         shell: bash
