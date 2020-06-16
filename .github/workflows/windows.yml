@@ -38,13 +38,14 @@ jobs:
           choco install ninja
 
       - name: Cache vcpkg C++ dependencies
+        id: cache_vcpkg
         uses: actions/cache@v2
         with:
           path: vcpkg
           key: dev-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles(format('{0}', env.VCPKG_RESPONSE_FILE)) }}
 
       - name: Install vcpkg packages (windows)
-        if: startsWith(matrix.os, 'windows')
+        if: steps.cache_vcpkg.outputs.cache-hit!='true' && startsWith(matrix.os, 'windows')
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
           ${{ github.workspace }}/vcpkg/vcpkg install @${{env.VCPKG_RESPONSE_FILE}}
