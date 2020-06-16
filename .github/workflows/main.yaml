@@ -204,12 +204,10 @@ jobs:
         with:
           submodules: true
 
-
       - name: Print env
         run: |
           echo github.event.action: ${{ github.event.action }}
           echo github.event_name: ${{ github.event_name }}
-
       
       - name: Install vcpkg packages (windows)
         if: startsWith(matrix.config.os, 'windows') && steps.cache-vcpkg.outputs.cache-hit != 'true'
@@ -230,6 +228,7 @@ jobs:
         with:
           python-version: ${{ matrix.config.python_version }}
           architecture: ${{ matrix.config.architecture }}
+
       - run: |
           python -m pip install --upgrade pip
           pip install -r external/pip_requirements.txt
