@@ -50,13 +50,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install absl-py protobuf
 
-      - name: Alter the path to avoid using rtool's tar before cache posting and protoc from vcpkg
-        if: startsWith(matrix.os, 'windows_NOMATCH')
-        run: |
-          echo "::add-path::C:/Program Files/Git/usr/bin"
-          # Add protobuf compiler exe path to path
-          echo "::add-path::${{ github.workspace }}/installed/${{ matrix.vcpkg_triplet }}/tools/protobuf"
-
       - name: Configure (windows-x64)
         shell: bash
         run: |
@@ -67,11 +60,11 @@ jobs:
             -G "${{ matrix.generator }}" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
 
       - name: Build
         shell: bash
-        run: cmake --build build --target firebase_app fireabase_auth --config ${{ matrix.build_type }}
+        run: cmake --build build --config ${{ matrix.build_type }} -j 8
 
       - name: Print built libraries
         shell: bash
