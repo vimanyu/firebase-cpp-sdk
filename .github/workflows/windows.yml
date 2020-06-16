@@ -13,9 +13,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest,]
-        build_type: ["Release", "Debug"]
+        build_type: ["Release"]
         architecture: ["x64",]
-        python_version: [2.7, 3.6]
+        python_version: [2.7]
         generator: ["Visual Studio 16 2019",]
         include:
         - os: windows-latest
