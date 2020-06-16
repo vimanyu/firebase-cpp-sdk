@@ -68,11 +68,10 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
-            -DFIREBASE_INCLUDE_FIRESTORE=OFF
 
       - name: Build
         shell: bash
-        run: cmake --build build --config ${{ matrix.build_type }}
+        run: cmake --build build --target firebase_app fireabase_auth --config ${{ matrix.build_type }}
 
       - name: Print built libraries
         shell: bash
