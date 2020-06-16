@@ -30,7 +30,7 @@ jobs:
 
       - name: Set env variables for subsequent steps (all)
         run: |
-          echo "::set-env name=VCPKG_RESPONSE_FILE::external/vcpkg_${{ matrix.vcpkg_triplet }}_response_file.txt"
+          echo "::set-env name=VCPKG_RESPONSE_FILE::vcpkg_${{ matrix.vcpkg_triplet }}_response_file.txt"
 
       - name: Install Ninja
         if: startsWith(matrix.generator, 'Ninja')
@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: vcpkg
-          key: dev-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles( "${{ env.VCPKG_RESPONSE_FILE }}" ) }}
+          key: dev-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles( 'external/${{ env.VCPKG_RESPONSE_FILE }}' ) }}
           restore-keys: |
             dev-vcpkg-${{ matrix.vcpkg_triplet }}-
 
@@ -49,7 +49,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
-          ${{ github.workspace }}/vcpkg/vcpkg install @${{ env.VCPKG_RESPONSE_FILE }}
+          ${{ github.workspace }}/vcpkg/vcpkg install @external/${{ env.VCPKG_RESPONSE_FILE }}
 
       - name: Setup python
         uses: actions/setup-python@v2
