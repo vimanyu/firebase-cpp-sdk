@@ -28,16 +28,29 @@ jobs:
         with:
           submodules: true
 
+      - name: Set env variables for subsequent steps (all)
+        run: |
+          echo "::set-env name=VCPKG_RESPONSE_FILE::external/vcpkg_${{ matrix.vcpkg_triplet }}_response_file.txt"
+
       - name: Install Ninja
         if: startsWith(matrix.generator, 'Ninja')
         run: |
           choco install ninja
+
+      - name: Cache vcpkg C++ dependencies
+        uses: actions/cache@v2
+        with:
+          path: vcpkg
+          key: dev-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles( '${{ env.VCPKG_RESPONSE_FILE }}' ) }}
+          restore-keys: |
+            dev-vcpkg-${{ matrix.vcpkg_triplet }}-
+
       - name: Install vcpkg packages (windows)
         if: startsWith(matrix.os, 'windows')
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
-          # ${{ github.workspace }}/vcpkg/vcpkg install openssl protobuf zlib abseil --triplet ${{ matrix.vcpkg_triplet }}
-          ${{ github.workspace }}/vcpkg/vcpkg install @external/vcpkg_${{ matrix.vcpkg_triplet }}_response_file.txt
+          ${{ github.workspace }}/vcpkg/vcpkg install @'${{ env.VCPKG_RESPONSE_FILE }}'
+
       - name: Setup python
         uses: actions/setup-python@v2
         with:
@@ -48,6 +61,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install absl-py protobuf
+
       - name: Configure (windows-x64)
         shell: bash
         run: |
