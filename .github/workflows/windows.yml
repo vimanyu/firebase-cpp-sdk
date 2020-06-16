@@ -61,7 +61,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build --target firebase_app firebase_remote_config --config ${{ matrix.build_type }} -j 8
+        run: cmake --build build --config ${{ matrix.build_type }} -j 8
 
       - name: Print built libraries
         shell: bash
