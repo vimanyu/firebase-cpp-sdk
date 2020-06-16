@@ -3,7 +3,7 @@ name: Desktop Builds
 on: 
   push:
     branches:
-      - gha-build
+      - feature/gha-windows
 
 jobs:
   build:
