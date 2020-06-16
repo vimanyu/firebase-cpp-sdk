@@ -41,7 +41,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: vcpkg
-          key: dev-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles( ${{ env.VCPKG_RESPONSE_FILE }} ) }}
+          key: dev-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles( "${{ env.VCPKG_RESPONSE_FILE }}" ) }}
           restore-keys: |
             dev-vcpkg-${{ matrix.vcpkg_triplet }}-
 
