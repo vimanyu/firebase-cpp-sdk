@@ -72,7 +72,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: cmake --build build --config ${{ matrix.build_type }} -j 8
+        run: cmake --build build --config ${{ matrix.build_type }}
 
       - name: Print built libraries
         shell: bash
