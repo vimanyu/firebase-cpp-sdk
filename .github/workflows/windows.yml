@@ -51,7 +51,7 @@ jobs:
           pip install absl-py protobuf
 
       - name: Alter the path to avoid using rtool's tar before cache posting and protoc from vcpkg
-        if: startsWith(matrix.os, 'windows')
+        if: startsWith(matrix.os, 'windows_NOMATCH')
         run: |
           echo "::add-path::C:/Program Files/Git/usr/bin"
           # Add protobuf compiler exe path to path
@@ -67,7 +67,8 @@ jobs:
             -G "${{ matrix.generator }}" \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }}
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.triplet }} \
+            -DFIREBASE_INCLUDE_FIRESTORE=OFF
 
       - name: Build
         shell: bash
