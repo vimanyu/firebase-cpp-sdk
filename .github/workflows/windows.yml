@@ -37,7 +37,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
-          ${{ github.workspace }}/vcpkg/vcpkg install openssl protobuf zlib abseil upb c-ares nanopb --triplet ${{ matrix.vcpkg_triplet }}
+          ${{ github.workspace }}/vcpkg/vcpkg install openssl protobuf zlib abseil --triplet ${{ matrix.vcpkg_triplet }}
 
       - name: Setup python
         uses: actions/setup-python@v2
