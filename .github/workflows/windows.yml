@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: vcpkg/installed
-          key: dev2-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles(format('{0}', env.VCPKG_RESPONSE_FILE)) }}
+          key: dev2-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles(format('{0}', env.VCPKG_RESPONSE_FILE)) }}-${{ hashFiles('.git/modules/vcpkg/HEAD') }}
 
       - name: Install vcpkg packages (windows)
         if: steps.cache_vcpkg.outputs.cache-hit!='true' && startsWith(matrix.os, 'windows')
