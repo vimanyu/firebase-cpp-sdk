@@ -76,7 +76,6 @@ jobs:
           pip install -r ${{ env.PIP_REQUIREMENTS_FILE }}
 
       - name: Configure (windows-x64)
-        shell: bash
         run: |
           mkdir build
           cmake \
