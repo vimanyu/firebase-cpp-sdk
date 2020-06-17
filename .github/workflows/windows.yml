@@ -62,7 +62,6 @@ jobs:
           pip install absl-py protobuf
 
       - name: Configure (windows-x64)
-        if: false
         shell: bash
         run: |
           mkdir build
@@ -75,12 +74,10 @@ jobs:
             -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
 
       - name: Build
-        if: false
         shell: bash
         run: cmake --build build --config ${{ matrix.build_type }} -j 8
 
       - name: Print built libraries
-        if: false
         shell: bash
         run: |
           find build -name "*.lib"
