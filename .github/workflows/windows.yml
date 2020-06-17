@@ -67,7 +67,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.get_pip_cache_dir.outputs.cachedir }}
-          key: dev2-pip-${{ runner.os }}-${{ matrix.python_version }}-${{ matrix.architecture }}-${{ hashFiles(format('{0}', env.PIP_REQUIREMENTS_FILE) }}
+          key: dev2-pip-${{ runner.os }}-${{ matrix.python_version }}-${{ matrix.architecture }}-${{ hashFiles(format('{0}', env.PIP_REQUIREMENTS_FILE)) }}
 
       - name: Install pip packages
         run: |
