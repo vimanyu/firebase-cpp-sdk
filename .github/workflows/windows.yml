@@ -31,6 +31,7 @@ jobs:
       - name: Set env variables for subsequent steps (all)
         run: |
           echo "::set-env name=VCPKG_RESPONSE_FILE::external/vcpkg_${{ matrix.vcpkg_triplet }}_response_file.txt"
+          echo "::set-env name=PIP_REQUIREMENTS_FILE::external/pip_requirements.txt"
 
       - name: Install Ninja
         if: startsWith(matrix.generator, 'Ninja')
@@ -56,10 +57,22 @@ jobs:
           python-version: ${{ matrix.python_version }}
           architecture: ${{ matrix.architecture }}
 
+      - name: Get pip cache dir
+        id: get_pip_cache_dir
+        run: |
+          echo "::set-output name=cachedir::$(pip cache dir)"
+
+      - name: pip cache
+        id: cache-pip
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.get_pip_cache_dir.outputs.cachedir }}
+          key: dev2-pip-${{ runner.os }}-${{ matrix.python_version }}-${{ matrix.architecture }}-${{ hashFiles(format('{0}', env.PIP_REQUIREMENTS_FILE) }}
+
       - name: Install pip packages
         run: |
           python -m pip install --upgrade pip
-          pip install absl-py protobuf
+          pip install -r ${{ env.PIP_REQUIREMENTS_FILE }}
 
       - name: Configure (windows-x64)
         shell: bash
