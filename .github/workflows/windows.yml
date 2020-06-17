@@ -16,7 +16,7 @@ jobs:
         build_type: ["Release"]
         architecture: ["x64",]
         python_version: [2.7]
-        generator: ["Visual Studio 16 2019",]
+        generator: ["Visual Studio 16 2019", "Ninja"]
         include:
         - os: windows-latest
           architecture: "x64"
