@@ -134,6 +134,37 @@ if(FIREBASE_INCLUDE_FIRESTORE AND DESKTOP)
   set(FIRESTORE_USE_EXTERNAL_CMAKE_BUILD ON)
 endif()
 
+
+################################################################################
+# buildcache
+# 
+# buildcache will be used if found in path
+# It is required to use compiler flag /Zi to be able to use buildcache
+# See https://docs.microsoft.com/en-us/cpp/build/reference/z7-zi-zi-debug-information-format?view=vs-2019
+# The adjustments of build flags must also be placed after libecl, as the adjustments
+# cause compiler issues for libecl
+################################################################################
+
+find_program(buildcache_program buildcache HINTS ${CMAKE_SOURCE_DIR}/bin)
+if(buildcache_program)
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${buildcache_program}")
+  message( STATUS "Found buildcache from : ${buildcache_program}" )
+
+  if (MSVC)
+    string(REGEX REPLACE "/Zi" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+
+    if(CMAKE_CXX_FLAGS_DEBUG MATCHES "/Zi")
+      message(STATUS "Clearing pdb setting")
+      string(REGEX REPLACE "/Zi" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+    endif()
+
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Z7")
+  endif()
+else()
+    message( STATUS "No buildcache found" )
+endif()
+
+
 if(FIREBASE_CPP_USE_PRIOR_GRADLE_BUILD)
   # Figure out where app's binary_dir was.
   string(REGEX REPLACE

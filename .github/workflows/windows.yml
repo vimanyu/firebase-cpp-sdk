@@ -5,6 +5,10 @@ on:
     branches:
       - feature/gha-windows
 
+env:
+  BUILDCACHE_VERSION: 0.18.0
+  BUILDCACHE_DIR: ${{ github.workspace }}/buildcache_dir
+
 jobs:
   build:
     name: ${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.architecture }}-${{ matrix.python_version }}-${{ matrix.generator }}
@@ -37,6 +41,25 @@ jobs:
         if: startsWith(matrix.generator, 'Ninja')
         run: |
           choco install ninja
+
+      - name: Download buildcache
+        id: buildcache-download
+        shell: cmake -P {0}
+        run: |
+          if ("${{ runner.os }}" STREQUAL "Windows")
+            set(buildcache_suffix "win-msvc.zip")
+          elseif ("${{ runner.os }}" STREQUAL "Linux")
+            set(buildcache_suffix "linux.zip")
+          endif()
+          set(buildcache_version $ENV{BUILDCACHE_VERSION})
+          set(buildcache_url "https://github.com/mbitsnbites/buildcache/releases/download/v${buildcache_version}/buildcache-${buildcache_suffix}")
+          file(DOWNLOAD "${buildcache_url}" ./buildcache.zip)
+          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./buildcache.zip)
+          if (NOT "${{ runner.os }}" STREQUAL "Windows")
+            execute_process(
+              COMMAND chmod +x bin/buildcache
+            )
+          endif()
 
       - name: Cache vcpkg C++ dependencies
         id: cache_vcpkg
@@ -89,6 +112,9 @@ jobs:
       - name: Build
         shell: bash
         run: cmake --build build --config ${{ matrix.build_type }} -j 8
+
+      - name: Stats for buildcache
+        run: ${{ github.workspace }}/bin/buildcache -s
 
       - name: Print built libraries
         shell: bash
