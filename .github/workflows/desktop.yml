@@ -103,6 +103,12 @@ jobs:
           ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat -disableMetrics
           ${{ github.workspace }}/vcpkg/vcpkg install @${{env.VCPKG_RESPONSE_FILE}}
 
+      - name: Install vcpkg packages (mac and linux)
+        if: steps.cache_vcpkg.outputs.cache-hit!='true' && startsWith(matrix.os, 'windows')!='true'
+        run: |
+          ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh -disableMetrics
+          ${{ github.workspace }}/vcpkg/vcpkg install @${{env.VCPKG_RESPONSE_FILE}}
+
       - name: Setup python
         uses: actions/setup-python@v2
         with:
