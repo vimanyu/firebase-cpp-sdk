@@ -145,10 +145,17 @@ endif()
 # cause compiler issues for libecl
 ################################################################################
 
-find_program(buildcache_program buildcache HINTS ${CMAKE_SOURCE_DIR}/bin)
-if(buildcache_program)
-  set(CMAKE_CXX_COMPILER_LAUNCHER "${buildcache_program}")
-  message( STATUS "Found buildcache from : ${buildcache_program}" )
+if (MSVC)
+  set(compiler_cache_program buildcache)
+else()
+  set(compiler_cache_program ccache)
+endif()
+
+find_program(compilercache_program ${compiler_cache_program} HINTS ${CMAKE_SOURCE_DIR}/bin)
+if(compilercache_program)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${compiler_cache_program}")
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${compiler_cache_program}")
+  message( STATUS "Found compiler cache program : ${compiler_cache_program}" )
 
   if (MSVC)
     string(REGEX REPLACE "/Zi" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
@@ -161,7 +168,7 @@ if(buildcache_program)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Z7")
   endif()
 else()
-    message( STATUS "No buildcache found" )
+    message( STATUS "No compiler cache program found" )
 endif()
 
 
