@@ -54,7 +54,7 @@ jobs:
           echo "::set-env name=MATRIX_UNIQUE_NAME::${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.architecture }}-${{ matrix.python_version }}-${{ matrix.generator }}"
 
       - name: Install Ninja
-        if: startsWith(matrix.generator, 'Ninja') && starstwith(matrix.os, 'windows')
+        if: startsWith(matrix.generator, 'Ninja') && startsWith(matrix.os, 'windows')
         run: |
           choco install ninja
 
