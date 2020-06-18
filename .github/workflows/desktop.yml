@@ -143,7 +143,7 @@ jobs:
           pip install -r ${{ env.PIP_REQUIREMENTS_FILE }}
 
       - name: Cache ccache files (mac and linux)
-        if: startsWith(matrix.os, 'windows')!='true'
+        if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
         id: cache_ccache
         uses: actions/cache@v2
         with:
@@ -171,7 +171,7 @@ jobs:
         run: ${{ github.workspace }}/bin/buildcache -s
 
       - name: Stats for ccache (mac and linux)
-        if: startsWith(matrix.os, 'windows')!='true'
+        if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
         run: ccache -s
 
       - name: Print built libraries
