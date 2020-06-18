@@ -53,10 +53,20 @@ jobs:
           echo "::set-env name=PIP_REQUIREMENTS_FILE::external/pip_requirements.txt"
           echo "::set-env name=MATRIX_UNIQUE_NAME::${{ matrix.os }}-${{ matrix.build_type }}-${{ matrix.architecture }}-${{ matrix.python_version }}-${{ matrix.generator }}"
 
-      - name: Install Ninja
+      - name: Install Ninja (windows)
         if: startsWith(matrix.generator, 'Ninja') && startsWith(matrix.os, 'windows')
         run: |
           choco install ninja
+
+      - name: Install Ninja (mac)
+        if: startsWith(matrix.generator, 'Ninja') && startsWith(matrix.os, 'macos')
+        run: |
+          brew install ninja
+
+      - name: Install Ninja (linux)
+        if: startsWith(matrix.generator, 'Ninja') && startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt install ninja-build
 
       - name: Download buildcache (windows)
         if: startsWith(matrix.os, 'windows')
