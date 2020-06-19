@@ -29,7 +29,9 @@ jobs:
           generator: "Visual Studio 16 2019"
         - os: windows-latest
           generator: "Unix Makefiles"
-          
+        - os: windows-latest
+          generator: "Ninja"
+
         include:
         - os: windows-latest
           architecture: "x64"
