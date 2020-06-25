@@ -3,7 +3,7 @@ name: Desktop Builds
 on: 
   push:
     branches:
-      - feature/gha-windows
+      - feature/dummy-gha-windows
 
 env:
   BUILDCACHE_VERSION: 0.18.0
