@@ -146,6 +146,7 @@ endif()
 ################################################################################
 
 if (MSVC)
+  add_definition(/MP)
   set(compiler_cache_program buildcache)
 else()
   set(compiler_cache_program ccache)
